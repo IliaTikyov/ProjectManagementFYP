@@ -1,10 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 
 import image from "../assets/ImageOnLoginPage.png";
-
-import { CiLogin } from "react-icons/ci";
 import { FaSignInAlt } from "react-icons/fa";
 
 const Login = () => {
@@ -75,7 +73,7 @@ const Login = () => {
             </div>
           </form>
           <p className="text-center text-gray-600">
-            Don't have an account?
+            Dont have an account?
             <Link to="/register" className="text-blue-500 hover:underline">
               Register
             </Link>
