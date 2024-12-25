@@ -4,6 +4,9 @@ import { useAuth } from "../utils/AuthContext";
 
 import image from "../assets/ImageOnLoginPage.png";
 
+import { CiLogin } from "react-icons/ci";
+import { FaSignInAlt } from "react-icons/fa";
+
 const Login = () => {
   const { user, loginUser } = useAuth();
   const navigate = useNavigate();
@@ -33,7 +36,9 @@ const Login = () => {
           <img src={image} alt="Stay on Track" className="max-w-full h-auto" />
         </div>
         <div className="w-full md:w-1/2 p-10">
-          <h2 className="text-2xl font-bold mb-6 justify-center">Welcome</h2>{" "}
+          <h2 className="text-2xl font-bold mb-6 flex justify-center">
+            Welcome!
+          </h2>{" "}
           <form onSubmit={handleSubmit} ref={loginForm}>
             <div className="mb-6">
               <label className="block mb-2 text-lg font-medium text-gray-700">
@@ -60,11 +65,13 @@ const Login = () => {
               />
             </div>
             <div className="mb-6">
-              <input
+              <button
                 type="submit"
-                value="Login"
-                className="w-full py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition duration-200"
-              />
+                className="w-full py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition duration-200 flex items-center justify-center"
+              >
+                <span className="mr-2">Login</span>
+                <FaSignInAlt className="h-5 w-5" />
+              </button>
             </div>
           </form>
           <p className="text-center text-gray-600">
