@@ -7,9 +7,9 @@ import {
 } from "react-router-dom";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import { AuthProvider } from "./utils/AuthContext";
-import Header from "./components/Header";
-import Home from "./pages/Home";
-import Profile from "./pages/Profile";
+import SideBar from "./components/SideBar";
+import TaskBoard from "./pages/TaskBoard";
+import Members from "./pages/Members";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
@@ -17,13 +17,11 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <HeaderHandler />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route element={<PrivateRoutes />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="*" element={<SidebarWrapper />} />
           </Route>
         </Routes>
       </AuthProvider>
@@ -31,13 +29,18 @@ function App() {
   );
 }
 
-// This component handles the conditional rendering of the Header
-function HeaderHandler() {
+function SidebarWrapper() {
   const currentLocation = useLocation();
-  const noHeaderRoutes = ["/login", "/register"];
+  const noSidebarRoutes = ["/login", "/register"];
 
-  // Conditionally render the header
-  return !noHeaderRoutes.includes(currentLocation.pathname) ? <Header /> : null;
+  return !noSidebarRoutes.includes(currentLocation.pathname) ? (
+    <SideBar>
+      <Routes>
+        <Route path="/" element={<TaskBoard />} />
+        <Route path="/members" element={<Members />} />
+      </Routes>
+    </SideBar>
+  ) : null;
 }
 
 export default App;
