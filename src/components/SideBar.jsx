@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 
+import { CiLogout } from "react-icons/ci";
+
 const SideBar = ({ children }) => {
   const { logoutUser } = useAuth();
 
@@ -18,9 +20,10 @@ const SideBar = ({ children }) => {
         </Link>
         <button
           onClick={logoutUser}
-          className="mt-auto text-lg font-semibold hover:text-gray-200"
+          className="mt-auto text-lg font-semibold bg-red-500 text-white hover:bg-red-700 p-3 rounded-lg flex items-center justify-center space-x-2"
         >
-          Logout
+          <span>Logout</span>
+          <CiLogout />
         </button>
       </div>
       <div className="flex-grow p-6 bg-white">{children}</div>
