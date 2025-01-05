@@ -10,7 +10,7 @@ const SideBar = ({ children }) => {
     <div className="min-h-screen flex">
       <div className="w-64 bg-blue-500 text-white flex flex-col p-6">
         <Link to="/" className="mb-4 text-lg font-semibold hover:text-gray-200">
-          TaskBoard
+          Task Board
         </Link>
         <Link
           to="/members"
