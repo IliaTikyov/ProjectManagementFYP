@@ -1,5 +1,11 @@
 import { useDraggable } from "@dnd-kit/core";
 
+const priorityColors = {
+  low: "text-white bg-green-500",
+  medium: "text-white bg-yellow-500",
+  high: "text-white bg-red-500",
+};
+
 const CardItems = ({ card, columnId }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
@@ -21,9 +27,18 @@ const CardItems = ({ card, columnId }) => {
       {...listeners}
       className="bg-white shadow-md p-2 rounded-md"
     >
-      {card.content}
+      <p className="font-bold">{card.content}</p>
       {card.description && (
         <p className="text-sm text-gray-500">{card.description}</p>
+      )}
+      {card.priority && (
+        <span
+          className={`inline-block mx-auto px-5 py-1 mt-2 text-xs font-semibold rounded-md ${
+            priorityColors[card.priority]
+          }`}
+        >
+          {card.priority.toUpperCase()}
+        </span>
       )}
     </div>
   );

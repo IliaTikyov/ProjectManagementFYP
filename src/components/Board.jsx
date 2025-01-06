@@ -12,18 +12,33 @@ const Board = () => {
           id: "1",
           content: "Task 1",
           description: "Hello there",
+          priority: "low",
         },
       ],
     },
     {
       id: "inprogress",
       title: "In Progress",
-      cards: [{ id: "2", content: "Task 2", description: "Hello there" }],
+      cards: [
+        {
+          id: "2",
+          content: "Task 2",
+          description: "Hello there",
+          priority: "medium",
+        },
+      ],
     },
     {
       id: "Completed",
       title: "Completed",
-      cards: [{ id: "3", content: "Task 3", description: "Hello there" }],
+      cards: [
+        {
+          id: "3",
+          content: "Task 3",
+          description: "Hello there",
+          priority: "high",
+        },
+      ],
     },
   ]);
 
