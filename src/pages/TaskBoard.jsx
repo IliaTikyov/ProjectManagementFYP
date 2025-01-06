@@ -1,5 +1,7 @@
+import Board from "../components/Board";
+
 const TaskBoard = () => {
-  return <div>hello</div>;
+  return <Board />;
 };
 
 export default TaskBoard;
