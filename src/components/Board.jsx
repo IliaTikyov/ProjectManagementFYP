@@ -42,6 +42,19 @@ const Board = () => {
     },
   ]);
 
+  const addCard = (columnId, newCard) => {
+    setColumns((prev) =>
+      prev.map((col) =>
+        col.id === columnId
+          ? {
+              ...col,
+              cards: [...col.cards, { id: Date.now().toString(), ...newCard }],
+            }
+          : col
+      )
+    );
+  };
+
   const handleDragEnd = ({ active, over }) => {
     if (!over) return;
 
@@ -72,7 +85,7 @@ const Board = () => {
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <div className="flex space-x-4 p-4">
         {columns.map((column) => (
-          <BoardLanes key={column.id} column={column} />
+          <BoardLanes key={column.id} column={column} addCard={addCard} />
         ))}
       </div>
     </DndContext>
