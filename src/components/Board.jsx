@@ -4,42 +4,9 @@ import BoardLanes from "./BoardLanes";
 
 const Board = () => {
   const [columns, setColumns] = useState([
-    {
-      id: "todo",
-      title: "To Do",
-      cards: [
-        {
-          id: "1",
-          content: "Task 1",
-          description: "Hello there",
-          priority: "low",
-        },
-      ],
-    },
-    {
-      id: "inprogress",
-      title: "In Progress",
-      cards: [
-        {
-          id: "2",
-          content: "Task 2",
-          description: "Hello there",
-          priority: "medium",
-        },
-      ],
-    },
-    {
-      id: "Completed",
-      title: "Completed",
-      cards: [
-        {
-          id: "3",
-          content: "Task 3",
-          description: "Hello there",
-          priority: "high",
-        },
-      ],
-    },
+    { id: "todo", title: "To Do", cards: [] },
+    { id: "inprogress", title: "In Progress", cards: [] },
+    { id: "completed", title: "Completed", cards: [] },
   ]);
 
   const addCard = (columnId, newCard) => {
