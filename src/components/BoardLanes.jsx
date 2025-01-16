@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import CardItems from "./CardItems";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
-const BoardLanes = ({ column, addCard, updateCard }) => {
+const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
   const { setNodeRef } = useDroppable({
     id: column.id,
   });
@@ -44,6 +44,12 @@ const BoardLanes = ({ column, addCard, updateCard }) => {
 
   const handleCancelEdit = () => {
     setEditingCardId(null);
+  };
+
+  const handleDeleteCard = (columnId, cardId) => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      deleteCard(columnId, cardId);
+    }
   };
 
   return (
@@ -155,9 +161,15 @@ const BoardLanes = ({ column, addCard, updateCard }) => {
                 <CardItems card={card} columnId={column.id} />
                 <button
                   onClick={() => handleEditCard(card)}
-                  className="absolute top-0 right-0 bg-white text-black px-2 py-1 rounded"
+                  className="absolute top-0 right-8 bg-white text-orange-500 px-2 py-1 rounded"
                 >
                   <FaEdit />
+                </button>
+                <button
+                  onClick={() => handleDeleteCard(column.id, card.id)}
+                  className="absolute top-0 right-0 bg-white text-red-500 px-2 py-1 rounded"
+                >
+                  <FaTrashAlt />
                 </button>
               </>
             )}

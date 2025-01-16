@@ -37,6 +37,19 @@ const Board = () => {
     );
   };
 
+  const deleteCard = (columnId, cardId) => {
+    setColumns((prev) =>
+      prev.map((col) =>
+        col.id === columnId
+          ? {
+              ...col,
+              cards: col.cards.filter((card) => card.id !== cardId),
+            }
+          : col
+      )
+    );
+  };
+
   const handleDragEnd = ({ active, over }) => {
     if (!over) return;
 
@@ -72,6 +85,7 @@ const Board = () => {
             column={column}
             addCard={addCard}
             updateCard={updateCard}
+            deleteCard={deleteCard}
           />
         ))}
       </div>
