@@ -19,7 +19,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+
           <Route element={<PrivateRoutes />}>
             <Route path="*" element={<SidebarWrapper />} />
           </Route>
@@ -31,7 +31,7 @@ function App() {
 
 function SidebarWrapper() {
   const currentLocation = useLocation();
-  const noSidebarRoutes = ["/login", "/register"];
+  const noSidebarRoutes = ["/login"];
 
   return !noSidebarRoutes.includes(currentLocation.pathname) ? (
     <SideBar>
