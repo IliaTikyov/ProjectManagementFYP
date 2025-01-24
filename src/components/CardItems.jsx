@@ -1,5 +1,4 @@
 import { useDraggable } from "@dnd-kit/core";
-import { date } from "yup";
 
 const priorityOptions = {
   low: "text-white bg-green-500",
@@ -44,7 +43,7 @@ const CardItems = ({ card, columnId }) => {
       <div>
         {new Date(card.dueDate) >= new Date() ? (
           <p className="text-md text-blue-500 mt-2">
-            Due: {new Date(card.dueDate).toLocaleDateString()} (in
+            Due: {new Date(card.dueDate).toLocaleDateString()} (in{" "}
             {Math.ceil(
               (new Date(card.dueDate) - new Date()) / (1000 * 60 * 60 * 24)
             )}{" "}
@@ -52,7 +51,7 @@ const CardItems = ({ card, columnId }) => {
           </p>
         ) : (
           <p className="text-md text-red-500 mt-2">
-            Task is overdue by
+            Task is overdue by{" "}
             {Math.ceil(
               (new Date() - new Date(card.dueDate)) / (1000 * 60 * 60 * 24)
             )}{" "}

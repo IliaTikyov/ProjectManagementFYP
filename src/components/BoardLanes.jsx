@@ -5,6 +5,7 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { FaCalendarAlt } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { createTask } from "../appwriteConfig";
 
 const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
   const { setNodeRef } = useDroppable({
@@ -27,12 +28,23 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
 
   const [selectDate, setSelectDate] = useState(null);
 
-  const handleAddCard = () => {
+  const handleAddCard = async () => {
     if (newCard.content.trim() === "") return;
-    addCard(column.id, { ...newCard, dueDate: selectDate });
-    setNewCard({ content: "", description: "", priority: "low" });
-    setSelectDate(null);
-    setIsAdding(false);
+
+    try {
+      await createTask(
+        newCard.content,
+        newCard.description,
+        newCard.priority,
+        selectDate
+      );
+      addCard(column.id, { ...newCard, dueDate: selectDate });
+      setNewCard({ content: "", description: "", priority: "low" });
+      setSelectDate(null);
+      setIsAdding(false);
+    } catch (error) {
+      console.error("Error creating task >>", error);
+    }
   };
 
   const handleEditCard = (card) => {
