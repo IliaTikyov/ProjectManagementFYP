@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import CardItems from "./CardItems";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaCalendarAlt } from "react-icons/fa";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
   const { setNodeRef } = useDroppable({
@@ -13,6 +16,7 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
     description: "",
     priority: "low",
   });
+
   const [isAdding, setIsAdding] = useState(false);
   const [editingCardId, setEditingCardId] = useState(null);
   const [editCard, setEditCard] = useState({
@@ -21,10 +25,13 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
     priority: "low",
   });
 
+  const [selectDate, setSelectDate] = useState(null);
+
   const handleAddCard = () => {
     if (newCard.content.trim() === "") return;
-    addCard(column.id, newCard);
+    addCard(column.id, { ...newCard, dueDate: selectDate });
     setNewCard({ content: "", description: "", priority: "low" });
+    setSelectDate(null);
     setIsAdding(false);
   };
 
@@ -34,11 +41,13 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
       content: card.content,
       description: card.description,
       priority: card.priority,
+      dueDate: card.dueDate,
     });
+    setSelectDate(card.dueDate);
   };
 
   const handleSave = () => {
-    updateCard(column.id, editingCardId, editCard);
+    updateCard(column.id, editingCardId, { ...editCard, dueDate: selectDate });
     setEditingCardId(null);
   };
 
@@ -76,6 +85,17 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
             }
             className="w-full p-2 mb-2 border rounded"
           />
+          <div className="flex items-center">
+            <DatePicker
+              selected={selectDate}
+              onChange={(date) => setSelectDate(date)}
+              //minDate={new Date()}
+              isClearable
+              placeholderText="Due date"
+              className="w-full p-2 mb-2 border rounded"
+            />
+            <FaCalendarAlt className="h-8 w-8 text-gray-500 ml-2" />
+          </div>
           <select
             value={newCard.priority}
             onChange={(e) =>
@@ -130,6 +150,17 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
                   }
                   className="w-full p-2 mb-2 border rounded"
                 />
+                <div className="flex items-center">
+                  <DatePicker
+                    selected={selectDate}
+                    onChange={(date) => setSelectDate(date)}
+                    //minDate={new Date()}
+                    isClearable
+                    placeholderText="Due date"
+                    className="w-full p-2 mb-2 border rounded"
+                  />
+                  <FaCalendarAlt className="h-8 w-8 text-gray-500 ml-2" />
+                </div>
                 <select
                   value={editCard.priority}
                   onChange={(e) =>
