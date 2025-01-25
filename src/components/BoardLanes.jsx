@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import CardItems from "./CardItems";
@@ -40,7 +41,7 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
       await database.createDocument(
         "67714f2e0006d28825f7",
         "67714f5100032d069052",
-        uniqueID.unique(), // Use uniqueID instead of ID
+        uniqueID.unique(),
         cardData
       );
       console.log("Document created successfully!");
@@ -50,19 +51,32 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
   };
 
   const handleEditCard = (card) => {
-    setEditingCardId(card.id);
+    setEditingCardId(card.$id);
     setEditCard({
       content: card.content,
       description: card.description,
       priority: card.priority,
       dueDate: card.dueDate,
+      columnId: column.id,
     });
     setSelectDate(card.dueDate);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     updateCard(column.id, editingCardId, { ...editCard, dueDate: selectDate });
     setEditingCardId(null);
+
+    try {
+      await database.updateDocument(
+        "67714f2e0006d28825f7",
+        "67714f5100032d069052",
+        editingCardId,
+        { ...editCard, dueDate: selectDate, columnId: column.id }
+      );
+      console.log("Document updated successfully!");
+    } catch (error) {
+      console.error("Error updating document:", error);
+    }
   };
 
   const handleCancelEdit = () => {
@@ -146,8 +160,9 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
       )}
       <div className="space-y-2">
         {column.cards.map((card) => (
-          <div key={card.id} className="relative">
-            {editingCardId === card.id ? (
+          <div key={card.$id} className="relative">
+            {" "}
+            {editingCardId === card.$id ? (
               <div className="mt-4 mb-4 p-2 bg-white rounded-md shadow">
                 <input
                   type="text"
