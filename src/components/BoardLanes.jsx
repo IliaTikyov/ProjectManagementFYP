@@ -5,7 +5,7 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { FaCalendarAlt } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { createTask } from "../appwriteConfig";
+import { database, uniqueID } from "../appwriteConfig";
 
 const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
   const { setNodeRef } = useDroppable({
@@ -30,20 +30,23 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
 
   const handleAddCard = async () => {
     if (newCard.content.trim() === "") return;
+    const cardData = { ...newCard, dueDate: selectDate };
+    addCard(column.id, cardData);
+    setNewCard({ content: "", description: "", priority: "low" });
+    setSelectDate(null);
+    setIsAdding(false);
 
     try {
-      await createTask(
-        newCard.content,
-        newCard.description,
-        newCard.priority,
-        selectDate
+      await database.createDocument(
+        "67714f2e0006d28825f7",
+        "67714f5100032d069052",
+
+        uniqueID.unique(), // Use uniqueID instead of ID
+        cardData
       );
-      addCard(column.id, { ...newCard, dueDate: selectDate });
-      setNewCard({ content: "", description: "", priority: "low" });
-      setSelectDate(null);
-      setIsAdding(false);
+      console.log("Document created successfully!");
     } catch (error) {
-      console.error("Error creating task >>", error);
+      console.error("Error creating document:", error);
     }
   };
 
