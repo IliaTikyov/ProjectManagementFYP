@@ -100,7 +100,7 @@ const Board = () => {
       if (!fromColumn || !toColumn) return prev;
 
       const cardIndex = fromColumn.cards.findIndex(
-        (card) => card.id === cardId
+        (card) => card.id === cardId || card.$id === cardId
       );
       const [movedCard] = fromColumn.cards.splice(cardIndex, 1);
 
