@@ -75,7 +75,9 @@ const Board = () => {
         col.id === columnId
           ? {
               ...col,
-              cards: col.cards.filter((card) => card.id !== cardId),
+              cards: col.cards.filter(
+                (card) => card.id !== cardId && card.$id !== cardId
+              ),
             }
           : col
       )
