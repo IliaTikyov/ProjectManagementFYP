@@ -30,7 +30,7 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
 
   const handleAddCard = async () => {
     if (newCard.content.trim() === "") return;
-    const cardData = { ...newCard, dueDate: selectDate };
+    const cardData = { ...newCard, dueDate: selectDate, columnId: column.id };
     addCard(column.id, cardData);
     setNewCard({ content: "", description: "", priority: "low" });
     setSelectDate(null);
@@ -40,7 +40,6 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
       await database.createDocument(
         "67714f2e0006d28825f7",
         "67714f5100032d069052",
-
         uniqueID.unique(), // Use uniqueID instead of ID
         cardData
       );

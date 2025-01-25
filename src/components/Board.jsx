@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import BoardLanes from "./BoardLanes";
+import { database } from "../appwriteConfig";
 
 const Board = () => {
   const [columns, setColumns] = useState([
@@ -8,6 +9,40 @@ const Board = () => {
     { id: "inprogress", title: "In Progress", cards: [] },
     { id: "completed", title: "Completed", cards: [] },
   ]);
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        console.log("Fetching cards...");
+        const response = await database.listDocuments(
+          "67714f2e0006d28825f7",
+          "67714f5100032d069052"
+        );
+        console.log("Fetched data:", response);
+        const cards = response.documents;
+
+        // Populate columns with fetched cards
+        setColumns((prevColumns) => {
+          const updatedColumns = prevColumns.map((col) => {
+            const filteredCards = cards.filter(
+              (card) => card.columnId === col.id
+            );
+            console.log(`Assigning cards to column ${col.id}:`, filteredCards);
+            return {
+              ...col,
+              cards: filteredCards,
+            };
+          });
+          console.log("Updated columns:", updatedColumns);
+          return updatedColumns;
+        });
+      } catch (error) {
+        console.error("Error fetching cards:", error);
+      }
+    };
+
+    fetchCards();
+  }, []);
 
   const addCard = (columnId, newCard) => {
     setColumns((prev) =>
