@@ -11,7 +11,6 @@ import SideBar from "./components/SideBar";
 import TaskBoard from "./pages/TaskBoard";
 import Members from "./pages/Members";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
 
 function App() {
   return (
@@ -19,7 +18,6 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
-
           <Route element={<PrivateRoutes />}>
             <Route path="*" element={<SidebarWrapper />} />
           </Route>

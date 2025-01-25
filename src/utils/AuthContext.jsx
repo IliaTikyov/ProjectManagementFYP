@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { createContext, useState, useEffect, useContext } from "react";
 import { account } from "../appwriteConfig";
 import { useNavigate } from "react-router-dom";

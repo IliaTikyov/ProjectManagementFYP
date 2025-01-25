@@ -1,7 +1,7 @@
 const Members = () => {
   return (
     <div>
-      <h1>Welcome to my profile!</h1>
+      <h1>Members page</h1>
     </div>
   );
 };

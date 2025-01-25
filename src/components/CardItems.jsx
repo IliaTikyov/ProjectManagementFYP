@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useDraggable } from "@dnd-kit/core";
 
 const priorityOptions = {
@@ -9,7 +10,7 @@ const priorityOptions = {
 const CardItems = ({ card, columnId }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
-      id: `${columnId}-${card.id}`,
+      id: `${columnId}-${card.$id}`,
     });
 
   const style = {
