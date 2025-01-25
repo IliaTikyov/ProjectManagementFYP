@@ -83,9 +83,20 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
     setEditingCardId(null);
   };
 
-  const handleDeleteCard = (columnId, cardId) => {
+  const handleDeleteCard = async (columnId, cardId) => {
     if (window.confirm("Are you sure you want to delete this task?")) {
-      deleteCard(columnId, cardId);
+      try {
+        await database.deleteDocument(
+          "67714f2e0006d28825f7",
+          "67714f5100032d069052",
+          cardId
+        );
+        console.log("Document deleted!");
+
+        deleteCard(columnId, cardId);
+      } catch (error) {
+        console.error("Error deleting document:", error);
+      }
     }
   };
 
@@ -117,7 +128,6 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
             <DatePicker
               selected={selectDate}
               onChange={(date) => setSelectDate(date)}
-              //minDate={new Date()}
               isClearable
               placeholderText="Due date"
               className="w-full p-2 mb-2 border rounded"
@@ -161,7 +171,6 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
       <div className="space-y-2">
         {column.cards.map((card) => (
           <div key={card.$id} className="relative">
-            {" "}
             {editingCardId === card.$id ? (
               <div className="mt-4 mb-4 p-2 bg-white rounded-md shadow">
                 <input
@@ -183,7 +192,6 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
                   <DatePicker
                     selected={selectDate}
                     onChange={(date) => setSelectDate(date)}
-                    //minDate={new Date()}
                     isClearable
                     placeholderText="Due date"
                     className="w-full p-2 mb-2 border rounded"
@@ -226,7 +234,7 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
                   <FaEdit />
                 </button>
                 <button
-                  onClick={() => handleDeleteCard(column.id, card.id)}
+                  onClick={() => handleDeleteCard(column.id, card.$id)}
                   className="absolute top-0 right-0 bg-white text-red-500 px-2 py-1 rounded"
                 >
                   <FaTrashAlt />
