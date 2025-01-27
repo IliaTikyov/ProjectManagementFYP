@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import BoardLanes from "./BoardLanes";
-import { database, client } from "../appwriteConfig";
+import client, { database } from "../appwriteConfig";
 
 const Board = () => {
   const [columns, setColumns] = useState([
