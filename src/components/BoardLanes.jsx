@@ -8,7 +8,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { database, uniqueID } from "../appwriteConfig";
 
-const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
+const BoardLanes = ({ column, updateCard, deleteCard }) => {
   const { setNodeRef } = useDroppable({
     id: column.id,
   });
@@ -32,10 +32,6 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
   const handleAddCard = async () => {
     if (newCard.content.trim() === "") return;
     const cardData = { ...newCard, dueDate: selectDate, columnId: column.id };
-    addCard(column.id, cardData);
-    setNewCard({ content: "", description: "", priority: "low" });
-    setSelectDate(null);
-    setIsAdding(false);
 
     try {
       await database.createDocument(
@@ -45,6 +41,10 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
         cardData
       );
       console.log("Document created successfully!");
+
+      setNewCard({ content: "", description: "", priority: "low" });
+      setSelectDate(null);
+      setIsAdding(false);
     } catch (error) {
       console.error("Error creating document:", error);
     }
@@ -169,80 +169,86 @@ const BoardLanes = ({ column, addCard, updateCard, deleteCard }) => {
         </button>
       )}
       <div className="space-y-2">
-        {column.cards.map((card) => (
-          <div key={card.$id} className="relative">
-            {editingCardId === card.$id ? (
-              <div className="mt-4 mb-4 p-2 bg-white rounded-md shadow">
-                <input
-                  type="text"
-                  value={editCard.content}
-                  onChange={(e) =>
-                    setEditCard({ ...editCard, content: e.target.value })
-                  }
-                  className="w-full p-2 mb-2 border rounded"
-                />
-                <textarea
-                  value={editCard.description}
-                  onChange={(e) =>
-                    setEditCard({ ...editCard, description: e.target.value })
-                  }
-                  className="w-full p-2 mb-2 border rounded"
-                />
-                <div className="flex items-center">
-                  <DatePicker
-                    selected={selectDate}
-                    onChange={(date) => setSelectDate(date)}
-                    isClearable
-                    placeholderText="Due date"
+        {column.cards && column.cards.length > 0 ? (
+          column.cards.map((card) => (
+            <div key={card.$id} className="relative">
+              {editingCardId === card.$id ? (
+                <div className="mt-4 mb-4 p-2 bg-white rounded-md shadow">
+                  <input
+                    type="text"
+                    value={editCard.content}
+                    onChange={(e) =>
+                      setEditCard({ ...editCard, content: e.target.value })
+                    }
                     className="w-full p-2 mb-2 border rounded"
                   />
-                  <FaCalendarAlt className="h-8 w-8 text-gray-500 ml-2" />
-                </div>
-                <select
-                  value={editCard.priority}
-                  onChange={(e) =>
-                    setEditCard({ ...editCard, priority: e.target.value })
-                  }
-                  className="w-full p-2 mb-2 border rounded"
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-                <div className="flex justify-between">
-                  <button
-                    onClick={handleSave}
-                    className="bg-blue-400 text-white px-4 py-2 rounded"
+                  <textarea
+                    value={editCard.description}
+                    onChange={(e) =>
+                      setEditCard({ ...editCard, description: e.target.value })
+                    }
+                    className="w-full p-2 mb-2 border rounded"
+                  />
+                  <div className="flex items-center">
+                    <DatePicker
+                      selected={selectDate}
+                      onChange={(date) => setSelectDate(date)}
+                      isClearable
+                      placeholderText="Due date"
+                      className="w-full p-2 mb-2 border rounded"
+                    />
+                    <FaCalendarAlt className="h-8 w-8 text-gray-500 ml-2" />
+                  </div>
+                  <select
+                    value={editCard.priority}
+                    onChange={(e) =>
+                      setEditCard({ ...editCard, priority: e.target.value })
+                    }
+                    className="w-full p-2 mb-2 border rounded"
                   >
-                    Save
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                  <div className="flex justify-between">
+                    <button
+                      onClick={handleSave}
+                      className="bg-blue-400 text-white px-4 py-2 rounded"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="bg-neutral-400 text-white px-4 py-2 rounded"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <CardItems card={card} columnId={column.id} />
+                  <button
+                    onClick={() => handleEditCard(card)}
+                    className="absolute top-0 right-8 bg-white text-orange-500 px-2 py-1 rounded"
+                  >
+                    <FaEdit />
                   </button>
                   <button
-                    onClick={handleCancelEdit}
-                    className="bg-neutral-400 text-white px-4 py-2 rounded"
+                    onClick={() => handleDeleteCard(column.id, card.$id)}
+                    className="absolute top-0 right-0 bg-white text-red-500 px-2 py-1 rounded"
                   >
-                    Cancel
+                    <FaTrashAlt />
                   </button>
-                </div>
-              </div>
-            ) : (
-              <>
-                <CardItems card={card} columnId={column.id} />
-                <button
-                  onClick={() => handleEditCard(card)}
-                  className="absolute top-0 right-8 bg-white text-orange-500 px-2 py-1 rounded"
-                >
-                  <FaEdit />
-                </button>
-                <button
-                  onClick={() => handleDeleteCard(column.id, card.$id)}
-                  className="absolute top-0 right-0 bg-white text-red-500 px-2 py-1 rounded"
-                >
-                  <FaTrashAlt />
-                </button>
-              </>
-            )}
-          </div>
-        ))}
+                </>
+              )}
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500 flex justify-center mt-2">
+            Please add a card...
+          </p>
+        )}
       </div>
     </div>
   );
