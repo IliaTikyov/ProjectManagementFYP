@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import BoardLanes from "./BoardLanes";
-import { database } from "../appwriteConfig";
+import { database, client } from "../appwriteConfig";
 
 const Board = () => {
   const [columns, setColumns] = useState([
@@ -37,6 +37,54 @@ const Board = () => {
     };
 
     fetchCards();
+  }, []);
+
+  useEffect(() => {
+    const channel =
+      "databases.67714f2e0006d28825f7.collections.67714f5100032d069052.documents";
+
+    const unsubscribe = client.subscribe(channel, (response) => {
+      const eventType = response.events[0];
+      const changedCards = response.payload;
+
+      if (eventType.includes("create")) {
+        setColumns((prevColumns) => {
+          return prevColumns.map((col) => {
+            if (col.id === changedCards.columnId) {
+              return { ...col, cards: [changedCards, ...col.cards] };
+            }
+            return col;
+          });
+        });
+      }
+
+      if (eventType.includes("update")) {
+        setColumns((prevColumns) => {
+          return prevColumns.map((col) => {
+            if (col.id === changedCards.columnId) {
+              const updatedCards = col.cards.map((card) =>
+                card.$id === changedCards.$id ? changedCards : card
+              );
+              return { ...col, cards: updatedCards };
+            }
+            return col;
+          });
+        });
+      }
+
+      if (eventType.includes("delete")) {
+        setColumns((prevColumns) => {
+          return prevColumns.map((col) => {
+            return {
+              ...col,
+              cards: col.cards.filter((card) => card.$id !== changedCards.$id),
+            };
+          });
+        });
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const addCard = (columnId, newCard) => {
