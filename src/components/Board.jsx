@@ -154,6 +154,15 @@ const Board = () => {
 
       toColumn.cards.push(movedCard);
 
+      movedCard.columnId = toColumnId;
+
+      database.updateDocument(
+        "67714f2e0006d28825f7",
+        "67714f5100032d069052",
+        movedCard.$id,
+        { columnId: toColumnId }
+      );
+
       return updatedColumns;
     });
   };
