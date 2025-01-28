@@ -1,10 +1,15 @@
-import { Outlet, Navigate } from 'react-router-dom'
-import { useAuth } from './AuthContext'
+import { Outlet, Navigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 const PrivateRoutes = () => {
-    const {user} = useAuth()
+  const { user } = useAuth();
 
-    return user ? <Outlet/> : <Navigate to="/login"/>
-}
+  try {
+    return user ? <Outlet /> : <Navigate to="/login" />;
+  } catch (error) {
+    console.error("Error: There are problem in the routes", error);
+    return <div>Sorry We were unable to connect</div>;
+  }
+};
 
-export default PrivateRoutes
+export default PrivateRoutes;
