@@ -1,14 +1,10 @@
 /* eslint-disable react/prop-types */
 import { createContext, useState, useEffect, useContext } from "react";
 import { account } from "../appwriteConfig";
-import { useNavigate } from "react-router-dom";
-import { ID } from "appwrite";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const navigate = useNavigate();
-
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
@@ -36,28 +32,6 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  const registerUser = async (userInfo) => {
-    setLoading(true);
-
-    try {
-      await account.create(
-        ID.unique(),
-        userInfo.email,
-        userInfo.password1,
-        userInfo.name
-      );
-
-      await account.createEmailSession(userInfo.email, userInfo.password1);
-      let accountDetails = await account.get();
-      setUser(accountDetails);
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-    }
-
-    setLoading(false);
-  };
-
   const checkUserStatus = async () => {
     try {
       let accountDetails = await account.get();
@@ -72,7 +46,6 @@ export const AuthProvider = ({ children }) => {
     user,
     loginUser,
     logoutUser,
-    registerUser,
   };
 
   return (
@@ -84,9 +57,9 @@ export const AuthProvider = ({ children }) => {
 
 const LoadingSpinner = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-700">
-      <div className="w-16 h-16 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-      <p className="mt-4 text-lg font-semibold">Loading, please wait...</p>
+    <div className="bg-gray-100 text-gray-700 flex flex-col items-center justify-center min-h-screen">
+      <div className="border-t-blue-500 border-gray-300 w-20 h-20 border-4 rounded-full animate-spin"></div>
+      <p className="mt-4 text-lg font-semibold">Loading, data please wait...</p>
     </div>
   );
 };
