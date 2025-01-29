@@ -28,8 +28,8 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-200 to-white">
-      <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-lg overflow-hidden w-full max-w-4xl">
+    <div className=" bg-gradient-to-r from-gray-200 to-white min-h-screen flex items-center justify-center">
+      <div className=" bg-white rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden w-full max-w-4xl">
         <div className="w-full md:w-1/2 items-center justify-center">
           <img src={image} alt="Stay on Track" className="max-w-full h-auto" />
         </div>

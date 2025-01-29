@@ -7,7 +7,7 @@ const PrivateRoutes = () => {
   try {
     return user ? <Outlet /> : <Navigate to="/login" />;
   } catch (error) {
-    console.error("Error: There are problem in the routes", error);
+    console.error("Error: Error has occurred in PrivateRoutes", error);
     return <div>Sorry We were unable to connect</div>;
   }
 };

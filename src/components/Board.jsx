@@ -4,7 +4,7 @@ import BoardLanes from "./BoardLanes";
 import client, { database } from "../appwriteConfig";
 
 const Board = () => {
-  const [columns, setColumns] = useState([
+  const [boardLanes, setBoardLanes] = useState([
     { id: "todo", title: "To Do", cards: [] },
     { id: "inprogress", title: "In Progress", cards: [] },
     { id: "completed", title: "Completed", cards: [] },
@@ -19,7 +19,7 @@ const Board = () => {
         );
         const cards = response.documents;
 
-        setColumns((prevColumns) => {
+        setBoardLanes((prevColumns) => {
           const updatedColumns = prevColumns.map((col) => {
             const filteredCards = cards.filter(
               (card) => card.columnId === col.id
@@ -48,7 +48,7 @@ const Board = () => {
       const changedCards = response.payload;
 
       if (eventType.includes("create")) {
-        setColumns((prevColumns) => {
+        setBoardLanes((prevColumns) => {
           return prevColumns.map((col) => {
             if (col.id === changedCards.columnId) {
               return { ...col, cards: [changedCards, ...col.cards] };
@@ -59,7 +59,7 @@ const Board = () => {
       }
 
       if (eventType.includes("update")) {
-        setColumns((prevColumns) => {
+        setBoardLanes((prevColumns) => {
           return prevColumns.map((col) => {
             if (col.id === changedCards.columnId) {
               const updatedCards = col.cards.map((card) =>
@@ -73,7 +73,7 @@ const Board = () => {
       }
 
       if (eventType.includes("delete")) {
-        setColumns((prevColumns) => {
+        setBoardLanes((prevColumns) => {
           return prevColumns.map((col) => {
             return {
               ...col,
@@ -88,7 +88,7 @@ const Board = () => {
   }, []);
 
   const addCard = (columnId, newCard) => {
-    setColumns((prev) =>
+    setBoardLanes((prev) =>
       prev.map((col) =>
         col.id === columnId
           ? {
@@ -101,7 +101,7 @@ const Board = () => {
   };
 
   const updateCard = (columnId, cardId, updatedCard) => {
-    setColumns((prev) =>
+    setBoardLanes((prev) =>
       prev.map((col) =>
         col.id === columnId
           ? {
@@ -118,7 +118,7 @@ const Board = () => {
   };
 
   const deleteCard = (columnId, cardId) => {
-    setColumns((prev) =>
+    setBoardLanes((prev) =>
       prev.map((col) =>
         col.id === columnId
           ? {
@@ -140,7 +140,7 @@ const Board = () => {
 
     if (fromColumnId === toColumnId) return;
 
-    setColumns((prev) => {
+    setBoardLanes((prev) => {
       const updatedColumns = [...prev];
       const fromColumn = updatedColumns.find((col) => col.id === fromColumnId);
       const toColumn = updatedColumns.find((col) => col.id === toColumnId);
@@ -170,7 +170,7 @@ const Board = () => {
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <div className="flex space-x-4 p-4">
-        {columns.map((column) => (
+        {boardLanes.map((column) => (
           <BoardLanes
             key={column.id}
             column={column}
