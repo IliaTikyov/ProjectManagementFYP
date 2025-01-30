@@ -1,17 +1,40 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import CardItems from "./CardItems";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { FaCalendarAlt } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { database, uniqueID } from "../appwriteConfig";
+import { account, database, uniqueID, teams } from "../appwriteConfig";
 
-const BoardLanes = ({ column, updateCard, deleteCard }) => {
+const teamId = "679aa7000039e2993d1b";
+
+const findRole = async () => {
+  await account.get();
+  const selectRole = await teams.listMemberships(teamId);
+  for (const team of selectRole.memberships) {
+    if (team.roles.includes("admin")) {
+      return "admin";
+    }
+  }
+  return "user";
+};
+
+const BoardLanes = ({ column, modifyCard, deleteCard }) => {
   const { setNodeRef } = useDroppable({
     id: column.id,
   });
+
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    const findUserRole = async () => {
+      const role = await findRole();
+      setRole(role);
+    };
+    findUserRole();
+  }, []);
 
   const [newCard, setNewCard] = useState({
     content: "",
@@ -29,7 +52,7 @@ const BoardLanes = ({ column, updateCard, deleteCard }) => {
 
   const [selectDate, setSelectDate] = useState(null);
 
-  const handleAddCard = async () => {
+  const handleAdd = async () => {
     if (newCard.content.trim() === "") return;
     const cardData = { ...newCard, dueDate: selectDate, columnId: column.id };
 
@@ -50,7 +73,7 @@ const BoardLanes = ({ column, updateCard, deleteCard }) => {
     }
   };
 
-  const handleEditCard = (card) => {
+  const handleEdit = (card) => {
     setEditingCardId(card.$id);
     setEditCard({
       content: card.content,
@@ -63,7 +86,7 @@ const BoardLanes = ({ column, updateCard, deleteCard }) => {
   };
 
   const handleSave = async () => {
-    updateCard(column.id, editingCardId, { ...editCard, dueDate: selectDate });
+    modifyCard(column.id, editingCardId, { ...editCard, dueDate: selectDate });
     setEditingCardId(null);
 
     try {
@@ -83,7 +106,7 @@ const BoardLanes = ({ column, updateCard, deleteCard }) => {
     setEditingCardId(null);
   };
 
-  const handleDeleteCard = async (columnId, cardId) => {
+  const handleDelete = async (columnId, cardId) => {
     if (window.confirm("Are you sure you want to delete this task?")) {
       try {
         await database.deleteDocument(
@@ -101,7 +124,7 @@ const BoardLanes = ({ column, updateCard, deleteCard }) => {
   };
 
   return (
-    <div ref={setNodeRef} className="bg-gray-100 p-4 rounded-lg w-1/3">
+    <div ref={setNodeRef} className="bg-slate-100 p-4 rounded-lg w-1/3">
       <h2 className="text-lg font-bold mb-4 flex justify-center">
         {column.title}
       </h2>
@@ -147,7 +170,7 @@ const BoardLanes = ({ column, updateCard, deleteCard }) => {
           </select>
           <div className="flex justify-between">
             <button
-              onClick={handleAddCard}
+              onClick={handleAdd}
               className="bg-green-400 text-white px-4 py-2 rounded"
             >
               + Add
@@ -229,23 +252,25 @@ const BoardLanes = ({ column, updateCard, deleteCard }) => {
                 <>
                   <CardItems card={card} columnId={column.id} />
                   <button
-                    onClick={() => handleEditCard(card)}
-                    className="absolute top-0 right-8 bg-white text-orange-500 px-2 py-1 rounded"
+                    onClick={() => handleEdit(card)}
+                    className="bg-white text-orange-500 absolute top-0 right-8 px-2 py-1 rounded"
                   >
                     <FaEdit />
                   </button>
-                  <button
-                    onClick={() => handleDeleteCard(column.id, card.$id)}
-                    className="absolute top-0 right-0 bg-white text-red-500 px-2 py-1 rounded"
-                  >
-                    <FaTrashAlt />
-                  </button>
+                  {role === "admin" && (
+                    <button
+                      onClick={() => handleDelete(column.id, card.$id)}
+                      className="bg-white text-red-500 absolute top-0 right-0 px-2 py-1 rounded"
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  )}
                 </>
               )}
             </div>
           ))
         ) : (
-          <p className="text-gray-500 flex justify-center mt-2">
+          <p className="text-gray-500 flex justify-center mt-2 text-lg">
             Please add a card...
           </p>
         )}
