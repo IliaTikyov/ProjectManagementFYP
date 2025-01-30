@@ -19,13 +19,13 @@ const Board = () => {
         );
         const cards = response.documents;
 
-        setBoardLanes((prevColumns) => {
-          const updatedColumns = prevColumns.map((col) => {
+        setBoardLanes((prevBoardColumns) => {
+          const updatedColumns = prevBoardColumns.map((lane) => {
             const filteredCards = cards.filter(
-              (card) => card.columnId === col.id
+              (card) => card.columnId === lane.id
             );
             return {
-              ...col,
+              ...lane,
               cards: filteredCards,
             };
           });
@@ -48,36 +48,36 @@ const Board = () => {
       const changedCards = response.payload;
 
       if (eventType.includes("create")) {
-        setBoardLanes((prevColumns) => {
-          return prevColumns.map((col) => {
-            if (col.id === changedCards.columnId) {
-              return { ...col, cards: [changedCards, ...col.cards] };
+        setBoardLanes((prevBoardColumns) => {
+          return prevBoardColumns.map((lane) => {
+            if (lane.id === changedCards.columnId) {
+              return { ...lane, cards: [changedCards, ...lane.cards] };
             }
-            return col;
+            return lane;
           });
         });
       }
 
       if (eventType.includes("update")) {
-        setBoardLanes((prevColumns) => {
-          return prevColumns.map((col) => {
-            if (col.id === changedCards.columnId) {
-              const updatedCards = col.cards.map((card) =>
+        setBoardLanes((prevBoardColumns) => {
+          return prevBoardColumns.map((lane) => {
+            if (lane.id === changedCards.columnId) {
+              const updatedCards = lane.cards.map((card) =>
                 card.$id === changedCards.$id ? changedCards : card
               );
-              return { ...col, cards: updatedCards };
+              return { ...lane, cards: updatedCards };
             }
-            return col;
+            return lane;
           });
         });
       }
 
       if (eventType.includes("delete")) {
-        setBoardLanes((prevColumns) => {
-          return prevColumns.map((col) => {
+        setBoardLanes((prevBoardColumns) => {
+          return prevBoardColumns.map((lane) => {
             return {
-              ...col,
-              cards: col.cards.filter((card) => card.$id !== changedCards.$id),
+              ...lane,
+              cards: lane.cards.filter((card) => card.$id !== changedCards.$id),
             };
           });
         });
@@ -89,45 +89,45 @@ const Board = () => {
 
   const addCard = (columnId, newCard) => {
     setBoardLanes((prev) =>
-      prev.map((col) =>
-        col.id === columnId
+      prev.map((lane) =>
+        lane.id === columnId
           ? {
-              ...col,
-              cards: [...col.cards, { id: Date.now().toString(), ...newCard }],
+              ...lane,
+              cards: [...lane.cards, { id: Date.now().toString(), ...newCard }],
             }
-          : col
+          : lane
       )
     );
   };
 
-  const updateCard = (columnId, cardId, updatedCard) => {
+  const modifyCard = (columnId, cardId, updatedCard) => {
     setBoardLanes((prev) =>
-      prev.map((col) =>
-        col.id === columnId
+      prev.map((lane) =>
+        lane.id === columnId
           ? {
-              ...col,
-              cards: col.cards.map((card) =>
+              ...lane,
+              cards: lane.cards.map((card) =>
                 card.id === cardId || card.$id === cardId
                   ? { ...card, ...updatedCard }
                   : card
               ),
             }
-          : col
+          : lane
       )
     );
   };
 
   const deleteCard = (columnId, cardId) => {
     setBoardLanes((prev) =>
-      prev.map((col) =>
-        col.id === columnId
+      prev.map((lane) =>
+        lane.id === columnId
           ? {
-              ...col,
-              cards: col.cards.filter(
+              ...lane,
+              cards: lane.cards.filter(
                 (card) => card.id !== cardId && card.$id !== cardId
               ),
             }
-          : col
+          : lane
       )
     );
   };
@@ -142,8 +142,10 @@ const Board = () => {
 
     setBoardLanes((prev) => {
       const updatedColumns = [...prev];
-      const fromColumn = updatedColumns.find((col) => col.id === fromColumnId);
-      const toColumn = updatedColumns.find((col) => col.id === toColumnId);
+      const fromColumn = updatedColumns.find(
+        (lane) => lane.id === fromColumnId
+      );
+      const toColumn = updatedColumns.find((lane) => lane.id === toColumnId);
 
       if (!fromColumn || !toColumn) return prev;
 
@@ -175,7 +177,7 @@ const Board = () => {
             key={column.id}
             column={column}
             addCard={addCard}
-            updateCard={updateCard}
+            modifyCard={modifyCard}
             deleteCard={deleteCard}
           />
         ))}
