@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useDraggable } from "@dnd-kit/core";
+import { IoIosWarning } from "react-icons/io";
+import { IoTimeSharp } from "react-icons/io5";
 
 const priorityOptions = {
   low: "text-white bg-green-500",
@@ -43,20 +45,21 @@ const CardItems = ({ card, columnId }) => {
       )}
       <div>
         {new Date(card.dueDate) >= new Date() ? (
-          <p className="text-md text-blue-500 mt-2">
+          <p className="text-md text-blue-500 mt-2 flex">
             Due: {new Date(card.dueDate).toLocaleDateString()} (in{" "}
             {Math.ceil(
               (new Date(card.dueDate) - new Date()) / (1000 * 60 * 60 * 24)
             )}{" "}
-            days)
+            days ) <IoTimeSharp className="ml-1 mb-1 size-7" />
           </p>
         ) : (
-          <p className="text-md text-red-500 mt-2">
+          <p className="text-md text-red-500 mt-2 flex ">
             Task is overdue by{" "}
             {Math.ceil(
               (new Date() - new Date(card.dueDate)) / (1000 * 60 * 60 * 24)
             )}{" "}
             days
+            <IoIosWarning className="ml-1 mb-1 size-7" />
           </p>
         )}
       </div>

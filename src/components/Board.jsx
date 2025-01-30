@@ -12,28 +12,24 @@ const Board = () => {
 
   useEffect(() => {
     const fetchCards = async () => {
-      try {
-        const response = await database.listDocuments(
-          "67714f2e0006d28825f7",
-          "67714f5100032d069052"
-        );
-        const cards = response.documents;
+      const response = await database.listDocuments(
+        "67714f2e0006d28825f7",
+        "67714f5100032d069052"
+      );
+      const cards = response.documents;
 
-        setBoardLanes((prevBoardColumns) => {
-          const updatedColumns = prevBoardColumns.map((lane) => {
-            const filteredCards = cards.filter(
-              (card) => card.columnId === lane.id
-            );
-            return {
-              ...lane,
-              cards: filteredCards,
-            };
-          });
-          return updatedColumns;
+      setBoardLanes((prevBoardColumns) => {
+        const updatedColumns = prevBoardColumns.map((lane) => {
+          const filteredCards = cards.filter(
+            (card) => card.columnId === lane.id
+          );
+          return {
+            ...lane,
+            cards: filteredCards,
+          };
         });
-      } catch (error) {
-        console.error("Error fetching cards:", error);
-      }
+        return updatedColumns;
+      });
     };
 
     fetchCards();
