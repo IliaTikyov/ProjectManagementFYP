@@ -56,21 +56,16 @@ const BoardLanes = ({ column, modifyCard, deleteCard }) => {
     if (newCard.content.trim() === "") return;
     const cardData = { ...newCard, dueDate: selectDate, columnId: column.id };
 
-    try {
-      await database.createDocument(
-        "67714f2e0006d28825f7",
-        "67714f5100032d069052",
-        uniqueID.unique(),
-        cardData
-      );
-      console.log("Document created successfully!");
+    await database.createDocument(
+      "67714f2e0006d28825f7",
+      "67714f5100032d069052",
+      uniqueID.unique(),
+      cardData
+    );
 
-      setNewCard({ content: "", description: "", priority: "low" });
-      setSelectDate(null);
-      setIsAdding(false);
-    } catch (error) {
-      console.error("Error creating document:", error);
-    }
+    setNewCard({ content: "", description: "", priority: "low" });
+    setSelectDate(null);
+    setIsAdding(false);
   };
 
   const handleEdit = (card) => {
@@ -89,37 +84,26 @@ const BoardLanes = ({ column, modifyCard, deleteCard }) => {
     modifyCard(column.id, editingCardId, { ...editCard, dueDate: selectDate });
     setEditingCardId(null);
 
-    try {
-      await database.updateDocument(
-        "67714f2e0006d28825f7",
-        "67714f5100032d069052",
-        editingCardId,
-        { ...editCard, dueDate: selectDate, columnId: column.id }
-      );
-      console.log("Document updated successfully!");
-    } catch (error) {
-      console.error("Error updating document:", error);
-    }
+    await database.updateDocument(
+      "67714f2e0006d28825f7",
+      "67714f5100032d069052",
+      editingCardId,
+      { ...editCard, dueDate: selectDate, columnId: column.id }
+    );
   };
 
-  const handleCancelEdit = () => {
+  const handleCancel = () => {
     setEditingCardId(null);
   };
 
   const handleDelete = async (columnId, cardId) => {
     if (window.confirm("Are you sure you want to delete this task?")) {
-      try {
-        await database.deleteDocument(
-          "67714f2e0006d28825f7",
-          "67714f5100032d069052",
-          cardId
-        );
-        console.log("Document deleted!");
-
-        deleteCard(columnId, cardId);
-      } catch (error) {
-        console.error("Error deleting document:", error);
-      }
+      await database.deleteDocument(
+        "67714f2e0006d28825f7",
+        "67714f5100032d069052",
+        cardId
+      );
+      deleteCard(columnId, cardId);
     }
   };
 
@@ -155,7 +139,7 @@ const BoardLanes = ({ column, modifyCard, deleteCard }) => {
               placeholderText="Due date"
               className="w-full p-2 mb-2 border rounded"
             />
-            <FaCalendarAlt className="h-8 w-8 text-gray-500 ml-2" />
+            <FaCalendarAlt className=" text-blue-500 h-8 w-8 ml-2" />
           </div>
           <select
             value={newCard.priority}
@@ -186,7 +170,7 @@ const BoardLanes = ({ column, modifyCard, deleteCard }) => {
       ) : (
         <button
           onClick={() => setIsAdding(true)}
-          className="w-full mb-5 bg-green-400 text-white px-4 py-2 rounded-lg"
+          className=" bg-green-400 text-white w-full mb-5 px-4 py-2 rounded-lg"
         >
           + Add Card
         </button>
@@ -220,7 +204,7 @@ const BoardLanes = ({ column, modifyCard, deleteCard }) => {
                       placeholderText="Due date"
                       className="w-full p-2 mb-2 border rounded"
                     />
-                    <FaCalendarAlt className="h-8 w-8 text-gray-500 ml-2" />
+                    <FaCalendarAlt className=" text-blue-500 h-8 w-8 ml-2" />
                   </div>
                   <select
                     value={editCard.priority}
@@ -241,7 +225,7 @@ const BoardLanes = ({ column, modifyCard, deleteCard }) => {
                       Save
                     </button>
                     <button
-                      onClick={handleCancelEdit}
+                      onClick={handleCancel}
                       className="bg-neutral-400 text-white px-4 py-2 rounded"
                     >
                       Cancel

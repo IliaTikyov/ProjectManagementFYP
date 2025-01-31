@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import { FaTasks } from "react-icons/fa";
-import { BsPeopleFill } from "react-icons/bs";
+import { FaComments } from "react-icons/fa";
 
 import { CiLogout } from "react-icons/ci";
 
@@ -25,7 +25,7 @@ const SideBar = ({ children }) => {
           to="/members"
           className="mb-4 text-lg text-blue-500 font-semibold hover:text-blue-400 hover:bg-gray-200 border rounded-lg flex items-center justify-center bg-white p-2"
         >
-          Members <BsPeopleFill className="ml-2 mt-0.5" />
+          Comments <FaComments className="ml-2 mt-0.5" />
         </Link>
         <button
           onClick={logoutUser}

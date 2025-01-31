@@ -83,48 +83,51 @@ const Board = () => {
     return () => unsubscribe();
   }, []);
 
-  const addCard = (columnId, newCard) => {
+  const addCard = (lanesId, addNewCard) => {
     setBoardLanes((prev) =>
-      prev.map((lane) =>
-        lane.id === columnId
-          ? {
-              ...lane,
-              cards: [...lane.cards, { id: Date.now().toString(), ...newCard }],
-            }
-          : lane
-      )
+      prev.map((lane) => {
+        if (lane.id === lanesId) {
+          return {
+            ...lane,
+            cards: [
+              ...lane.cards,
+              { id: Date.now().toString(), ...addNewCard },
+            ],
+          };
+        }
+        return lane;
+      })
     );
   };
 
-  const modifyCard = (columnId, cardId, updatedCard) => {
+  const modifyCard = (lanesId, cardId, modifyCard) => {
     setBoardLanes((prev) =>
-      prev.map((lane) =>
-        lane.id === columnId
-          ? {
-              ...lane,
-              cards: lane.cards.map((card) =>
-                card.id === cardId || card.$id === cardId
-                  ? { ...card, ...updatedCard }
-                  : card
-              ),
-            }
-          : lane
-      )
+      prev.map((lane) => {
+        if (lane.id !== lanesId) return lane;
+
+        const updatedCards = lane.cards.map((card) => {
+          if (card.id === cardId || card.$id === cardId) {
+            return { ...card, ...modifyCard };
+          }
+          return card;
+        });
+
+        return { ...lane, cards: updatedCards };
+      })
     );
   };
 
-  const deleteCard = (columnId, cardId) => {
+  const deleteCard = (lanesId, cardId) => {
     setBoardLanes((prev) =>
-      prev.map((lane) =>
-        lane.id === columnId
-          ? {
-              ...lane,
-              cards: lane.cards.filter(
-                (card) => card.id !== cardId && card.$id !== cardId
-              ),
-            }
-          : lane
-      )
+      prev.map((lane) => {
+        if (lane.id !== lanesId) return lane;
+
+        const modifiedCards = lane.cards.filter(
+          (card) => card.id !== cardId && card.$id !== cardId
+        );
+
+        return { ...lane, cards: modifiedCards };
+      })
     );
   };
 
@@ -168,10 +171,10 @@ const Board = () => {
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <div className="flex space-x-4 p-4">
-        {boardLanes.map((column) => (
+        {boardLanes.map((lane) => (
           <BoardLanes
-            key={column.id}
-            column={column}
+            key={lane.id}
+            column={lane}
             addCard={addCard}
             modifyCard={modifyCard}
             deleteCard={deleteCard}
