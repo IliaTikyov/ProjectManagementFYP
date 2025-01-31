@@ -1,7 +1,12 @@
+import UserComments from "../components/UserComments";
+import { useAuth } from "../utils/AuthContext";
+
 const Members = () => {
+  const { user } = useAuth();
+
   return (
     <div>
-      <h1>Members page</h1>
+      <UserComments taskId={"12345"} userId={user.name} />
     </div>
   );
 };
