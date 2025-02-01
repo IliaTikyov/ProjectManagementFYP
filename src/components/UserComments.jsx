@@ -2,7 +2,7 @@ import client, { database, uniqueID } from "../appwriteConfig";
 import { useState, useEffect } from "react";
 import { IoIosSend } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa6";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaEdit, FaTrashAlt, FaCheck, FaTimes } from "react-icons/fa";
 
 const addComment = async (taskId, userId, content) => {
   const tagUser = TaggingUser(content);
@@ -49,9 +49,23 @@ export const deleteComments = async (documentId) => {
   return response;
 };
 
+export const editComments = async (documentId, updatedContent) => {
+  const response = await database.updateDocument(
+    "67714f2e0006d28825f7",
+    "679bba64000e4eda62cf",
+    documentId,
+    {
+      content: updatedContent,
+    }
+  );
+  return response;
+};
+
 const UserComments = ({ taskId, userId }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [editComment, setEditComment] = useState(null);
+  const [editedComment, setEditedComment] = useState("");
 
   useEffect(() => {
     if (taskId) {
@@ -62,6 +76,30 @@ const UserComments = ({ taskId, userId }) => {
   const fetchComments = async () => {
     const data = await retrieveComments(taskId);
     setComments(data);
+  };
+
+  const handleEditClick = (comment) => {
+    setEditComment(comment.$id);
+    setEditedComment(comment.content);
+  };
+
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async (documentId) => {
+    if (!editedComment.trim()) return;
+    setIsSaving(true);
+    await editComments(documentId, editedComment);
+    setComments((prevComments) =>
+      prevComments.map((comment) => {
+        if (comment.$id === documentId) {
+          return { ...comment, content: editedComment };
+        } else {
+          return comment;
+        }
+      })
+    );
+    setEditComment(null);
+    setIsSaving(false);
   };
 
   const handleDelete = async (documentId) => {
@@ -95,7 +133,7 @@ const UserComments = ({ taskId, userId }) => {
           />
           <button
             type="submit"
-            className="bg-green-500 text-white px-4 py-2 mb-2 rounded-lg mt-auto flex mr-2"
+            className="bg-green-500 text-white hover:bg-green-700 px-4 py-2 mb-2 rounded-lg mt-auto flex mr-2"
           >
             Send <IoIosSend className=" mt-1 ml-1 size-4" />
           </button>
@@ -110,9 +148,46 @@ const UserComments = ({ taskId, userId }) => {
                 <strong className="text-black flex items-center mr-2">
                   <FaRegUser className="text-blue-500 mr-1" /> {comment.userId}:
                 </strong>
-                <span>{comment.content}</span>
+                {editComment === comment.$id ? (
+                  <input
+                    type="text"
+                    value={editedComment}
+                    onChange={(e) => setEditedComment(e.target.value)}
+                    className="border border-gray-300 rounded p-1 w-full"
+                  />
+                ) : (
+                  <span>{comment.content}</span>
+                )}
               </div>
               <div className="flex items-center">
+                {editComment === comment.$id ? (
+                  <>
+                    {isSaving ? (
+                      <LoadingSpinner />
+                    ) : (
+                      <button
+                        onClick={() => handleSave(comment.$id)}
+                        className="text-green-500 hover:text-green-700 ml-2 p-2"
+                      >
+                        <FaCheck />
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => setEditComment(null)}
+                      className="text-gray-500 hover:text-gray-700 ml-2 p-2"
+                    >
+                      <FaTimes />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => handleEditClick(comment)}
+                    className="text-orange-500 hover:text-orange-700 ml-2 p-2"
+                  >
+                    <FaEdit />
+                  </button>
+                )}
                 <button
                   onClick={() => handleDelete(comment.$id)}
                   className="text-red-500 hover:text-red-700 ml-2 p-2"
@@ -125,6 +200,12 @@ const UserComments = ({ taskId, userId }) => {
         </ul>
       </div>
     </div>
+  );
+};
+
+export const LoadingSpinner = () => {
+  return (
+    <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
   );
 };
 
