@@ -2,8 +2,9 @@ import client, { database, uniqueID } from "../appwriteConfig";
 import { useState, useEffect } from "react";
 import { IoIosSend } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa6";
+import { FaTrashAlt } from "react-icons/fa";
 
-const comment = async (taskId, userId, content) => {
+const addComment = async (taskId, userId, content) => {
   const tagUser = TaggingUser(content);
   const response = await database.createDocument(
     "67714f2e0006d28825f7",
@@ -31,12 +32,21 @@ const TaggingUser = (text) => {
 };
 
 export const retrieveComments = async (taskId) => {
-  const response = await database.listDocuments(
+  const addComments = await database.listDocuments(
     "67714f2e0006d28825f7",
     "679bba64000e4eda62cf",
     [`equal("taskId", "${taskId}")`, "orderDesc(createdTime)"]
   );
-  return response.documents;
+  return addComments.documents;
+};
+
+export const deleteComments = async (documentId) => {
+  const response = await database.deleteDocument(
+    "67714f2e0006d28825f7",
+    "679bba64000e4eda62cf",
+    documentId
+  );
+  return response;
 };
 
 const UserComments = ({ taskId, userId }) => {
@@ -54,10 +64,17 @@ const UserComments = ({ taskId, userId }) => {
     setComments(data);
   };
 
+  const handleDelete = async (documentId) => {
+    if (window.confirm("Are you sure you want to delete this comment?")) {
+      await deleteComments(documentId);
+    }
+    setComments(comments.filter((com) => com.$id !== documentId));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
-    await comment(taskId, userId, newComment);
+    await addComment(taskId, userId, newComment);
     setNewComment("");
     fetchComments();
   };
@@ -87,13 +104,22 @@ const UserComments = ({ taskId, userId }) => {
           {comments.map((comment) => (
             <li
               key={comment.$id}
-              className="bg-white ml-2 mr-2 mb-2 rounded-lg text-gray-500 py-2 flex"
+              className="bg-white text-gray-500 mx-2 mb-2 rounded-lg shadow-md py-2 px-3 flex items-center"
             >
-              <strong className="text-black ml-2 flex mr-1">
-                <FaRegUser className="text-blue-500 mr-1 mt-1" />{" "}
-                {comment.userId}:
-              </strong>{" "}
-              {comment.content}
+              <div className="flex items-center flex-grow">
+                <strong className="text-black flex items-center mr-2">
+                  <FaRegUser className="text-blue-500 mr-1" /> {comment.userId}:
+                </strong>
+                <span>{comment.content}</span>
+              </div>
+              <div className="flex items-center">
+                <button
+                  onClick={() => handleDelete(comment.$id)}
+                  className="text-red-500 hover:text-red-700 ml-2 p-2"
+                >
+                  <FaTrashAlt />
+                </button>
+              </div>
             </li>
           ))}
         </ul>
