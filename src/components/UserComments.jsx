@@ -68,9 +68,39 @@ const UserComments = ({ taskId, userId }) => {
   const [editedComment, setEditedComment] = useState("");
 
   useEffect(() => {
-    if (taskId) {
-      fetchComments();
-    }
+    fetchComments();
+
+    const channel = `databases.67714f2e0006d28825f7.collections.679bba64000e4eda62cf.documents`;
+
+    const unsubscribe = client.subscribe(channel, (response) => {
+      console.log("Real-time event received:", response);
+
+      if (
+        response.events.includes("databases.*.collections.*.documents.*.create")
+      ) {
+        setComments((prev) => [response.payload, ...prev]);
+      }
+
+      if (
+        response.events.includes("databases.*.collections.*.documents.*.update")
+      ) {
+        setComments((prev) =>
+          prev.map((comment) =>
+            comment.$id === response.payload.$id ? response.payload : comment
+          )
+        );
+      }
+
+      if (
+        response.events.includes("databases.*.collections.*.documents.*.delete")
+      ) {
+        setComments((prev) =>
+          prev.filter((comment) => comment.$id !== response.payload.$id)
+        );
+      }
+    });
+
+    return () => unsubscribe();
   }, [taskId]);
 
   const fetchComments = async () => {
