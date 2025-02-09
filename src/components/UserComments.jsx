@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { IoIosSend } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa6";
 import { FaEdit, FaTrashAlt, FaCheck, FaTimes } from "react-icons/fa";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const addComment = async (taskId, userId, content) => {
   const tagUser = TaggingUser(content);
@@ -79,6 +81,7 @@ const UserComments = ({ taskId, userId }) => {
         response.events.includes("databases.*.collections.*.documents.*.create")
       ) {
         setComments((prev) => [response.payload, ...prev]);
+        toast.success("New comment added! 🚀");
       }
 
       if (
@@ -89,6 +92,7 @@ const UserComments = ({ taskId, userId }) => {
             comment.$id === response.payload.$id ? response.payload : comment
           )
         );
+        toast.info("Comment edited ✏️");
       }
 
       if (
@@ -97,6 +101,7 @@ const UserComments = ({ taskId, userId }) => {
         setComments((prev) =>
           prev.filter((comment) => comment.$id !== response.payload.$id)
         );
+        toast.error("Comment deleted 🗑️");
       }
     });
 
@@ -149,6 +154,11 @@ const UserComments = ({ taskId, userId }) => {
 
   return (
     <div className="flex justify-center">
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        //hideProgressBar
+      />
       <div className="bg-blue-50 pb-1 w-3/4 shadow-xl rounded-lg">
         <form
           onSubmit={handleSubmit}

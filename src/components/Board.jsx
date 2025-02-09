@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import BoardLanes from "./BoardLanes";
 import client, { database } from "../appwriteConfig";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Board = () => {
   const [boardLanes, setBoardLanes] = useState([
@@ -52,6 +54,7 @@ const Board = () => {
             return lane;
           });
         });
+        toast.success("New comment added! 🚀");
       }
 
       if (eventType.includes("update")) {
@@ -66,6 +69,7 @@ const Board = () => {
             return lane;
           });
         });
+        toast.info("Comment edited ✏️");
       }
 
       if (eventType.includes("delete")) {
@@ -77,6 +81,7 @@ const Board = () => {
             };
           });
         });
+        toast.error("Comment deleted 🗑️");
       }
     });
 
@@ -171,6 +176,11 @@ const Board = () => {
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <div className="flex space-x-4 p-4">
+        <ToastContainer
+          position="bottom-right"
+          autoClose={3000}
+          hideProgressBar
+        />
         {boardLanes.map((lane) => (
           <BoardLanes
             key={lane.id}
