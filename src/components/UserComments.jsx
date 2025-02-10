@@ -1,9 +1,8 @@
-import client, { database, uniqueID, account } from "../appwriteConfig";
+import client, { database, uniqueID } from "../appwriteConfig";
 import { useState, useEffect } from "react";
 import { IoIosSend } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa6";
 import { FaEdit, FaTrashAlt, FaCheck, FaTimes } from "react-icons/fa";
-import { useAuth } from "../utils/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { notifyMentionedUsers } from "./Notifications";
@@ -76,8 +75,6 @@ const UserComments = ({ taskId, userId }) => {
   const [editComment, setEditComment] = useState(null);
   const [editedComment, setEditedComment] = useState("");
 
-  const { user } = useAuth();
-
   useEffect(() => {
     fetchComments();
 
@@ -147,10 +144,14 @@ const UserComments = ({ taskId, userId }) => {
   };
 
   const handleDelete = async (documentId) => {
-    if (window.confirm("Are you sure you want to delete this comment?")) {
+    const userConfirmed = window.confirm(
+      "Are you sure you want to delete this comment?"
+    );
+
+    if (userConfirmed) {
       await deleteComments(documentId);
+      setComments(comments.filter((com) => com.$id !== documentId));
     }
-    setComments(comments.filter((com) => com.$id !== documentId));
   };
 
   const handleSubmit = async (e) => {
@@ -163,11 +164,7 @@ const UserComments = ({ taskId, userId }) => {
 
   return (
     <div className="flex justify-center">
-      <ToastContainer
-        position="bottom-right"
-        autoClose={3000}
-        //hideProgressBar
-      />
+      <ToastContainer position="bottom-right" autoClose={3000} />
       <div className="bg-blue-50 pb-1 w-3/4 shadow-xl rounded-lg">
         <form
           onSubmit={handleSubmit}
