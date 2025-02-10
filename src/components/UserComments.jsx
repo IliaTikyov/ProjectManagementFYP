@@ -1,10 +1,12 @@
-import client, { database, uniqueID } from "../appwriteConfig";
+import client, { database, uniqueID, account } from "../appwriteConfig";
 import { useState, useEffect } from "react";
 import { IoIosSend } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa6";
 import { FaEdit, FaTrashAlt, FaCheck, FaTimes } from "react-icons/fa";
+import { useAuth } from "../utils/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { notifyMentionedUsers } from "./Notifications";
 
 const addComment = async (taskId, userId, content) => {
   const tagUser = TaggingUser(content);
@@ -20,6 +22,11 @@ const addComment = async (taskId, userId, content) => {
       createdTime: new Date().toISOString(),
     }
   );
+
+  if (tagUser.length > 0) {
+    await notifyMentionedUsers(tagUser, userId, content);
+  }
+
   return response;
 };
 
@@ -68,6 +75,8 @@ const UserComments = ({ taskId, userId }) => {
   const [newComment, setNewComment] = useState("");
   const [editComment, setEditComment] = useState(null);
   const [editedComment, setEditedComment] = useState("");
+
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchComments();
