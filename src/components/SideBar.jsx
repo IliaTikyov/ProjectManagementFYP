@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import { FaTasks } from "react-icons/fa";
 import { FaComments } from "react-icons/fa";
+import { Notifications } from "../components/Notifications";
 
 import { CiLogout } from "react-icons/ci";
 
@@ -27,6 +28,7 @@ const SideBar = ({ children }) => {
         >
           Comments <FaComments className="ml-2 mt-0.5" />
         </Link>
+        <Notifications recipientId={user.$id} />
         <button
           onClick={logoutUser}
           className="mt-auto text-lg font-semibold bg-red-500 text-white hover:bg-red-700 p-3 rounded-lg flex items-center justify-center space-x-2"
