@@ -5,39 +5,22 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export const notifyMentionedUsers = async (tagUsernames, senderId, message) => {
-  console.log("Tagging users:", tagUsernames);
-  try {
-    // 🔍 Get the current logged-in user's details
-    const currentUser = await account.get();
-    const currentUserEmail = currentUser.name;
+  const currentUser = await account.get();
+  const currentUserName = currentUser.name;
 
-    console.log("Current user:", currentUser); // ✅ Log the current user's info
-
-    // Check if the current user is mentioned
-    if (tagUsernames.includes(currentUserEmail)) {
-      // Create a notification
-
-      console.log("Mentioned user detected:", currentUser.name); // ✅ Log if a mention is detected
-
-      await database.createDocument(
-        "67714f2e0006d28825f7",
-        "67a921e600233491b213",
-        uniqueID.unique(),
-        {
-          recipientId: currentUser.$id,
-          senderId: senderId,
-          message: `@${currentUserEmail}, you were mentioned in a comment: "${message}"`,
-          createdAt: new Date().toISOString(),
-          isRead: false,
-        }
-      );
-
-      console.log(`Notification sent to @${currentUserEmail}`);
-    } else {
-      console.log("No mentioned user found for the current user.");
-    }
-  } catch (error) {
-    console.error("Error notifying mentioned users:", error);
+  if (tagUsernames.includes(currentUserName)) {
+    await database.createDocument(
+      "67714f2e0006d28825f7",
+      "67a921e600233491b213",
+      uniqueID.unique(),
+      {
+        recipientId: currentUser.$id,
+        senderId: senderId,
+        message: `@${currentUserName}, you were mentioned in a comment: "${message}"`,
+        createdAt: new Date().toISOString(),
+        isRead: false,
+      }
+    );
   }
 };
 
@@ -46,13 +29,12 @@ export const Notifications = ({ recipientId }) => {
 
   useEffect(() => {
     const loadNotifications = async () => {
-      const data = await fetchNotifications(recipientId); // Fetch all notifications for the user
+      const data = await fetchNotifications(recipientId);
       setNotifications(data);
     };
 
     loadNotifications();
 
-    // Real-time subscription
     const channel = `databases.67714f2e0006d28825f7.collections.67a921e600233491b213.documents`;
     const unsubscribe = client.subscribe(channel, (response) => {
       if (
@@ -70,20 +52,23 @@ export const Notifications = ({ recipientId }) => {
   }, [recipientId]);
 
   return (
-    <div className=" bg-white border rounded-lg flex flex-col items-center justify-center p-3 max-w-md mx-auto hover:bg-gray-100">
-      <button className="text-blue-600">
-        <div className="relative inline-block">
-          <FaBell className="text-2xl" />
+    <div className=" bg-white border rounded-lg flex flex-col items-center justify-center p-4 max-w-md mx-auto hover:bg-gray-100">
+      <button className="text-blue-500">
+        <div className="relative flex">
+          <p className="mb-4 text-lg text-blue-500 font-semibold ">
+            Notifications
+          </p>{" "}
+          <FaBell className="ml-2 mt-1 text-lg" />
           {notifications.filter((n) => !n.isRead).length > 0 && (
-            <span className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white px-2 rounded-full text-xs">
+            <span className="absolute top-2 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white px-2 rounded-full text-xs">
               {notifications.filter((n) => !n.isRead).length}
             </span>
           )}
         </div>
       </button>
-      <div className="bg-white shadow-lg rounded-md w-40 p-3 mt-4">
+      <div className="bg-white shadow-lg rounded-md w-40 p-3 mt-2">
         {notifications.length === 0 ? (
-          <p className="text-gray-500 text-sm">No new notifications</p>
+          <p className="text-gray-500 text-sm">No Notifications</p>
         ) : (
           <ul>
             {notifications.map((note) => (
@@ -112,18 +97,12 @@ export const Notifications = ({ recipientId }) => {
 };
 
 const markNotificationAsRead = async (notificationId) => {
-  try {
-    await database.updateDocument(
-      "67714f2e0006d28825f7",
-      "67a921e600233491b213",
-      notificationId,
-      { isRead: true }
-    );
-
-    console.log("Notification marked as read");
-  } catch (error) {
-    console.error("Error marking notification as read:", error);
-  }
+  await database.updateDocument(
+    "67714f2e0006d28825f7",
+    "67a921e600233491b213",
+    notificationId,
+    { isRead: true }
+  );
 };
 
 export default Notifications;
