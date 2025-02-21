@@ -9,7 +9,7 @@ import { Query } from "appwrite";
 const userMapping = {
   ilia: "6769fe87003164c5646a",
   geri: "676daad3d1bdb988bad3",
-  Thanie: "679a76a9001574e7ffff",
+  thanie: "679a76a9001574e7ffff",
 };
 
 const removeNotification = async (notificationId) => {
