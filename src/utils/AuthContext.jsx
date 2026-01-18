@@ -5,11 +5,10 @@ import { account } from "../appwriteConfig";
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [initializing, setInitializing] = useState(true); // only for first load
+  const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(null);
   const [authError, setAuthError] = useState(null);
-  const [authLoading, setAuthLoading] = useState(false); // for login/logout actions
-
+  const [authLoading, setAuthLoading] = useState(false);
   useEffect(() => {
     let alive = true;
 
@@ -18,7 +17,6 @@ export const AuthProvider = ({ children }) => {
         const accountDetails = await account.get();
         if (alive) setUser(accountDetails);
       } catch {
-        // Not logged in is a normal case; avoid noisy console errors if you want
         if (alive) setUser(null);
       } finally {
         if (alive) setInitializing(false);

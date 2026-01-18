@@ -8,15 +8,15 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { account, database, uniqueID, teams } from "../appwriteConfig";
 
-const teamId = "679aa7000039e2993d1b";
+const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
+const COLLECTION_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID;
+const TEAM_ID = import.meta.env.VITE_APPWRITE_TEAM_ID;
 
 const findRole = async () => {
   await account.get();
-  const selectRole = await teams.listMemberships(teamId);
+  const selectRole = await teams.listMemberships(TEAM_ID);
   for (const team of selectRole.memberships) {
-    if (team.roles.includes("admin")) {
-      return "admin";
-    }
+    if (team.roles.includes("admin")) return "admin";
   }
   return "user";
 };
@@ -57,8 +57,8 @@ const BoardLanes = ({ column, modifyCard, deleteCard }) => {
     const cardData = { ...newCard, dueDate: selectDate, columnId: column.id };
 
     await database.createDocument(
-      "67714f2e0006d28825f7",
-      "67714f5100032d069052",
+      DATABASE_ID,
+      COLLECTION_ID,
       uniqueID.unique(),
       cardData
     );
@@ -84,12 +84,11 @@ const BoardLanes = ({ column, modifyCard, deleteCard }) => {
     modifyCard(column.id, editingCardId, { ...editCard, dueDate: selectDate });
     setEditingCardId(null);
 
-    await database.updateDocument(
-      "67714f2e0006d28825f7",
-      "67714f5100032d069052",
-      editingCardId,
-      { ...editCard, dueDate: selectDate, columnId: column.id }
-    );
+    await database.updateDocument(DATABASE_ID, COLLECTION_ID, editingCardId, {
+      ...editCard,
+      dueDate: selectDate,
+      columnId: column.id,
+    });
   };
 
   const handleCancel = () => {
@@ -98,11 +97,8 @@ const BoardLanes = ({ column, modifyCard, deleteCard }) => {
 
   const handleDelete = async (columnId, cardId) => {
     if (window.confirm("Are you sure you want to delete this task?")) {
-      await database.deleteDocument(
-        "67714f2e0006d28825f7",
-        "67714f5100032d069052",
-        cardId
-      );
+      await database.deleteDocument(DATABASE_ID, COLLECTION_ID, cardId);
+
       deleteCard(columnId, cardId);
     }
   };
