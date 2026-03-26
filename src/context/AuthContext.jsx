@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { account } from "../appwriteConfig";
+import { account } from "../services/appwriteClient";
 
 const AuthContext = createContext(null);
 
@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }) => {
       logoutUser,
       isAuthenticated: !!user,
     }),
-    [user, initializing, authLoading, authError]
+    [user, initializing, authLoading, authError],
   );
 
   if (initializing) return <LoadingSpinner />;
