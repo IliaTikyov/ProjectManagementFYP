@@ -4,9 +4,9 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import PrivateRoutes from "./utils/PrivateRoutes";
-import { AuthProvider } from "./utils/AuthContext";
-import SideBar from "./components/SideBar";
+import PrivateRoute from "./components/auth/PrivateRoute";
+import { AuthProvider } from "./context/AuthContext";
+import Sidebar from "./components/layout/Sidebar";
 import TaskBoard from "./pages/TaskBoard";
 import Members from "./pages/Members";
 import Login from "./pages/Login";
@@ -17,7 +17,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route element={<PrivateRoutes />}>
+          <Route element={<PrivateRoute />}>
             <Route path="*" element={<SidebarWrapper />} />
           </Route>
         </Routes>
@@ -31,12 +31,12 @@ function SidebarWrapper() {
   const noSidebarRoutes = ["/login"];
 
   return !noSidebarRoutes.includes(currentLocation.pathname) ? (
-    <SideBar>
+    <Sidebar>
       <Routes>
         <Route path="/" element={<TaskBoard />} />
         <Route path="/members" element={<Members />} />
       </Routes>
-    </SideBar>
+    </Sidebar>
   ) : null;
 }
 

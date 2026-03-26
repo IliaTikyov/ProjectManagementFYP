@@ -9,7 +9,7 @@ const priorityOptions = {
   high: "text-white bg-red-500",
 };
 
-const CardItems = ({ card, columnId }) => {
+const CardItem = ({ card, columnId }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: `${columnId}-${card.$id}`,
@@ -48,7 +48,7 @@ const CardItems = ({ card, columnId }) => {
           <p className="text-md text-blue-500 mt-2 flex">
             Due: {new Date(card.dueDate).toLocaleDateString()} (in{" "}
             {Math.ceil(
-              (new Date(card.dueDate) - new Date()) / (1000 * 60 * 60 * 24)
+              (new Date(card.dueDate) - new Date()) / (1000 * 60 * 60 * 24),
             )}{" "}
             days ) <IoTimeSharp className="ml-1 mb-1 size-7" />
           </p>
@@ -56,7 +56,7 @@ const CardItems = ({ card, columnId }) => {
           <p className="text-md text-red-500 mt-2 flex ">
             Warning!!! Task is overdue by{" "}
             {Math.ceil(
-              (new Date() - new Date(card.dueDate)) / (1000 * 60 * 60 * 24)
+              (new Date() - new Date(card.dueDate)) / (1000 * 60 * 60 * 24),
             )}{" "}
             days
             <IoIosWarning className="ml-1 mb-1 size-7" />
@@ -67,4 +67,4 @@ const CardItems = ({ card, columnId }) => {
   );
 };
 
-export default CardItems;
+export default CardItem;

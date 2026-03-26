@@ -1,7 +1,7 @@
 import { Outlet, Navigate } from "react-router-dom";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
-const PrivateRoutes = () => {
+const PrivateRoute = () => {
   const { user } = useAuth();
 
   try {
@@ -12,4 +12,4 @@ const PrivateRoutes = () => {
   }
 };
 
-export default PrivateRoutes;
+export default PrivateRoute;

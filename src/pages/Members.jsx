@@ -1,5 +1,5 @@
-import UserComments from "../components/UserComments";
-import { useAuth } from "../utils/AuthContext";
+import UserComments from "../components/project/UserComments";
+import { useAuth } from "../context/AuthContext";
 
 const Members = () => {
   const { user } = useAuth();

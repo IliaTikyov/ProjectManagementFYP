@@ -1,12 +1,17 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
-import CardItems from "./CardItems";
+import CardItem from "./CardItem";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { FaCalendarAlt } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { account, database, uniqueID, teams } from "../appwriteConfig";
+import {
+  account,
+  database,
+  uniqueID,
+  teams,
+} from "../../services/appwriteClient";
 
 const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
 const COLLECTION_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID;
@@ -21,7 +26,7 @@ const findRole = async () => {
   return "user";
 };
 
-const BoardLanes = ({ column, modifyCard, deleteCard }) => {
+const TaskLanes = ({ column, modifyCard, deleteCard }) => {
   const { setNodeRef } = useDroppable({
     id: column.id,
   });
@@ -60,7 +65,7 @@ const BoardLanes = ({ column, modifyCard, deleteCard }) => {
       DATABASE_ID,
       COLLECTION_ID,
       uniqueID.unique(),
-      cardData
+      cardData,
     );
 
     setNewCard({ content: "", description: "", priority: "low" });
@@ -230,7 +235,7 @@ const BoardLanes = ({ column, modifyCard, deleteCard }) => {
                 </div>
               ) : (
                 <>
-                  <CardItems card={card} columnId={column.id} />
+                  <CardItem card={card} columnId={column.id} />
                   <button
                     onClick={() => handleEdit(card)}
                     className="bg-white text-orange-500 absolute top-0 right-8 px-2 py-1 rounded"
@@ -259,4 +264,4 @@ const BoardLanes = ({ column, modifyCard, deleteCard }) => {
   );
 };
 
-export default BoardLanes;
+export default TaskLanes;

@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
-import BoardLanes from "./BoardLanes";
-import client, { database } from "../appwriteConfig";
+import client, { database } from "../../services/appwriteClient";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import TaskLanes from "./TaskLanes";
 
 const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
 const COLLECTION_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID;
@@ -54,7 +54,7 @@ const Board = () => {
 
   const channel = useMemo(
     () => `databases.${DATABASE_ID}.collections.${COLLECTION_ID}.documents`,
-    []
+    [],
   );
 
   const fetchCards = async () => {
@@ -67,7 +67,7 @@ const Board = () => {
         prev.map((lane) => ({
           ...lane,
           cards: cards.filter((card) => card.columnId === lane.id),
-        }))
+        })),
       );
     } catch (error) {
       console.error("Failed to fetch cards:", error);
@@ -96,19 +96,19 @@ const Board = () => {
 
       if (eventType.includes("create")) {
         setBoardLanes((prev) => upsertCardIntoLanes(prev, changedCard));
-        toast.success("New comment added! 🚀");
+        toast.success("New comment added!");
         return;
       }
 
       if (eventType.includes("update")) {
         setBoardLanes((prev) => upsertCardIntoLanes(prev, changedCard));
-        toast.info("Comment updated ✏️");
+        toast.info("Comment updated");
         return;
       }
 
       if (eventType.includes("delete")) {
         setBoardLanes((prev) => removeCardFromLanes(prev, changedCard));
-        toast.error("Comment deleted 🗑️");
+        toast.error("Comment deleted");
       }
     });
 
@@ -127,7 +127,7 @@ const Board = () => {
           ...lane,
           cards: [...lane.cards, { id: Date.now().toString(), ...addNewCard }],
         };
-      })
+      }),
     );
   };
 
@@ -141,7 +141,7 @@ const Board = () => {
           return card;
         });
         return { ...lane, cards: updatedCards };
-      })
+      }),
     );
   };
 
@@ -152,10 +152,10 @@ const Board = () => {
         return {
           ...lane,
           cards: lane.cards.filter(
-            (card) => getCardKey(card) !== String(cardId)
+            (card) => getCardKey(card) !== String(cardId),
           ),
         };
-      })
+      }),
     );
   };
 
@@ -178,7 +178,7 @@ const Board = () => {
       if (!fromLane || !toLane) return prev;
 
       const idx = fromLane.cards.findIndex(
-        (c) => getCardKey(c) === String(cardId)
+        (c) => getCardKey(c) === String(cardId),
       );
       if (idx === -1) return prev;
 
@@ -199,11 +199,11 @@ const Board = () => {
           DATABASE_ID,
           COLLECTION_ID,
           movedCard.$id,
-          { columnId: toLaneId }
+          { columnId: toLaneId },
         );
       } else {
         console.warn(
-          "Moved card has no $id. Persisting requires an Appwrite document id."
+          "Moved card has no $id. Persisting requires an Appwrite document id.",
         );
       }
     } catch (error) {
@@ -228,7 +228,7 @@ const Board = () => {
           </div>
         ) : (
           boardLanes.map((lane) => (
-            <BoardLanes
+            <TaskLanes
               key={lane.id}
               column={lane}
               addCard={addCard}

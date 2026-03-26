@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../utils/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
-import image from "../assets/ImageOnLoginPage.png";
+import image from "../assets/images/ImageOnLoginPage.png";
 import { FaSignInAlt } from "react-icons/fa";
 
 const Login = () => {
