@@ -93,7 +93,7 @@ const UserComments = ({ taskId, userId }) => {
         response.events.includes("databases.*.collections.*.documents.*.create")
       ) {
         setComments((prev) => [response.payload, ...prev]);
-        toast.success("New comment added! 🚀");
+        toast.success("New comment added!");
       }
 
       if (
@@ -104,7 +104,7 @@ const UserComments = ({ taskId, userId }) => {
             comment.$id === response.payload.$id ? response.payload : comment,
           ),
         );
-        toast.info("Comment edited ✏️");
+        toast.info("Comment edited");
       }
 
       if (
@@ -113,7 +113,7 @@ const UserComments = ({ taskId, userId }) => {
         setComments((prev) =>
           prev.filter((comment) => comment.$id !== response.payload.$id),
         );
-        toast.error("Comment deleted 🗑️");
+        toast.error("Comment deleted");
       }
     });
 

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DndContext, closestCenter } from "@dnd-kit/core";
+import { DndContext, closestCenter, DragOverlay } from "@dnd-kit/core";
 import client, { database } from "../../services/appwriteClient";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -201,10 +201,6 @@ const Board = () => {
           movedCard.$id,
           { columnId: toLaneId },
         );
-      } else {
-        console.warn(
-          "Moved card has no $id. Persisting requires an Appwrite document id.",
-        );
       }
     } catch (error) {
       console.error("Failed to persist move:", error);
@@ -214,31 +210,40 @@ const Board = () => {
   };
 
   return (
-    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <div className="flex space-x-4 p-4">
-        <ToastContainer
-          position="bottom-right"
-          autoClose={3000}
-          hideProgressBar
-        />
+    <div className="h-full w-full bg-slate-50 flex flex-col">
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar
+        theme="colored"
+      />
 
-        {hydrating ? (
-          <div className="w-full text-center text-gray-600 py-10">
-            Loading board…
-          </div>
-        ) : (
-          boardLanes.map((lane) => (
-            <TaskLanes
-              key={lane.id}
-              column={lane}
-              addCard={addCard}
-              modifyCard={modifyCard}
-              deleteCard={deleteCard}
-            />
-          ))
-        )}
+      <div className="flex items-center justify-between px-8 py-5 border-b bg-white">
+        <h1 className="text-2xl font-semibold text-slate-800">Project Board</h1>
       </div>
-    </DndContext>
+
+      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <div className="flex gap-6 px-8 py-6 h-full overflow-x-auto items-start">
+          {hydrating ? (
+            <div className="w-full flex justify-center items-center text-gray-500 text-lg">
+              Loading board...
+            </div>
+          ) : (
+            boardLanes.map((lane) => (
+              <TaskLanes
+                key={lane.id}
+                column={lane}
+                addCard={addCard}
+                modifyCard={modifyCard}
+                deleteCard={deleteCard}
+              />
+            ))
+          )}
+        </div>
+
+        <DragOverlay />
+      </DndContext>
+    </div>
   );
 };
 
