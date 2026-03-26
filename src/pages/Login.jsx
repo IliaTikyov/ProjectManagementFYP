@@ -1,78 +1,73 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
-import image from "../assets/images/ImageOnLoginPage.png";
 import { FaSignInAlt } from "react-icons/fa";
 
 const Login = () => {
   const { user, loginUser } = useAuth();
   const navigate = useNavigate();
-
   const loginForm = useRef(null);
 
   useEffect(() => {
     if (user) {
       navigate("/");
     }
-  });
+  }, [user, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const email = loginForm.current.email.value;
     const password = loginForm.current.password.value;
 
-    const userInfo = { email, password };
-
-    loginUser(userInfo);
+    loginUser({ email, password });
   };
 
   return (
-    <div className=" bg-gradient-to-r from-gray-200 to-white min-h-screen flex items-center justify-center">
-      <div className=" bg-white rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden w-full max-w-4xl">
-        <div className="w-full md:w-1/2 items-center justify-center">
-          <img src={image} alt="Stay on Track" className="max-w-full h-auto" />
-        </div>
-        <div className="w-full md:w-1/2 p-10">
-          <h2 className="text-2xl font-bold mb-6 flex justify-center">
-            Welcome!
-          </h2>{" "}
-          <form onSubmit={handleSubmit} ref={loginForm}>
-            <div className="mb-6">
-              <label className="block mb-2 text-lg font-medium text-gray-700">
-                Email:
-              </label>
-              <input
-                required
-                type="email"
-                name="email"
-                placeholder="Enter email..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="mb-6">
-              <label className="block mb-2 text-lg font-medium text-gray-700">
-                Password:
-              </label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter password..."
-                autoComplete="password"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="mb-6">
-              <button
-                type="submit"
-                className="w-full py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition duration-200 flex items-center justify-center"
-              >
-                <span className="mr-2">Login</span>
-                <FaSignInAlt className="h-5 w-5" />
-              </button>
-            </div>
-          </form>
-        </div>
+    <div className="min-h-screen bg-gradient-to-r from-slate-100 to-white flex items-center justify-center p-6">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-10">
+        <h2 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
+          Welcome Back
+        </h2>
+
+        <form onSubmit={handleSubmit} ref={loginForm} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Email
+            </label>
+
+            <input
+              required
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Password
+            </label>
+
+            <input
+              required
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              autoComplete="current-password"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2 shadow-sm"
+          >
+            Login
+            <FaSignInAlt />
+          </button>
+        </form>
       </div>
     </div>
   );
