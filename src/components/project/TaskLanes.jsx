@@ -111,7 +111,6 @@ const TaskLanes = ({ column, modifyCard, deleteCard }) => {
       ref={setNodeRef}
       className="flex flex-col flex-1 min-w-[280px] bg-slate-100 rounded-xl p-4 shadow-sm overflow-visible"
     >
-      {/* Column Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-slate-700">{column.title}</h2>
 
@@ -120,7 +119,6 @@ const TaskLanes = ({ column, modifyCard, deleteCard }) => {
         </span>
       </div>
 
-      {/* Add Card Form */}
       {isAdding ? (
         <div className="mb-4 p-4 bg-white rounded-lg border shadow-sm space-y-2">
           <input
@@ -190,7 +188,6 @@ const TaskLanes = ({ column, modifyCard, deleteCard }) => {
         </button>
       )}
 
-      {/* Cards */}
       <div className="flex flex-col gap-3 overflow-y-auto flex-1">
         {column.cards && column.cards.length > 0 ? (
           column.cards.map((card) => (

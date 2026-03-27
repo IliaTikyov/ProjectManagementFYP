@@ -39,8 +39,10 @@ export const AuthProvider = ({ children }) => {
       return { ok: true };
     } catch (error) {
       setUser(null);
-      setAuthError(error?.message ?? "Login failed");
-      return { ok: false, error };
+      const message = error?.message ?? "Login failed";
+      setAuthError(message);
+
+      throw error;
     } finally {
       setAuthLoading(false);
     }

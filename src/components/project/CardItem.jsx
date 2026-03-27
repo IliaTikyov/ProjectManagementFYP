@@ -4,9 +4,9 @@ import { IoIosWarning } from "react-icons/io";
 import { IoTimeSharp } from "react-icons/io5";
 
 const priorityOptions = {
-  low: "text-white bg-green-500",
-  medium: "text-white bg-yellow-500",
-  high: "text-white bg-red-500",
+  low: "bg-green-500 text-white",
+  medium: "bg-yellow-500 text-white",
+  high: "bg-red-500 text-white",
 };
 
 const CardItem = ({ card, columnId }) => {
@@ -19,8 +19,18 @@ const CardItem = ({ card, columnId }) => {
     transform: transform
       ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
       : undefined,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 50 : 1,
   };
+
+  const dueDate = card.dueDate ? new Date(card.dueDate) : null;
+  const today = new Date();
+
+  const daysDiff = dueDate
+    ? Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24))
+    : null;
+
+  const isOverdue = dueDate && dueDate < today;
 
   return (
     <div
@@ -28,41 +38,45 @@ const CardItem = ({ card, columnId }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-white shadow-md p-2 rounded-md"
+      className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition cursor-grab active:cursor-grabbing p-4"
     >
-      <p className="font-bold">{card.content}</p>
+      {/* Title */}
+      <p className="font-semibold text-gray-800 text-sm mb-1">{card.content}</p>
+
+      {/* Description */}
       {card.description && (
-        <p className="text-sm text-gray-500">{card.description}</p>
+        <p className="text-xs text-gray-500 mb-3 line-clamp-3">
+          {card.description}
+        </p>
       )}
+
+      {/* Priority */}
       {card.priority && (
         <span
-          className={`inline-block mx-auto px-5 py-1 mt-2 text-xs font-semibold rounded-md ${
-            priorityOptions[card.priority]
-          }`}
+          className={`inline-block px-2 py-1 text-xs font-semibold rounded-md mb-2 ${priorityOptions[card.priority]}`}
         >
           {card.priority.toUpperCase()}
         </span>
       )}
-      <div>
-        {new Date(card.dueDate) >= new Date() ? (
-          <p className="text-md text-blue-500 mt-2 flex">
-            Due: {new Date(card.dueDate).toLocaleDateString()} (in{" "}
-            {Math.ceil(
-              (new Date(card.dueDate) - new Date()) / (1000 * 60 * 60 * 24),
-            )}{" "}
-            days ) <IoTimeSharp className="ml-1 mb-1 size-7" />
-          </p>
-        ) : (
-          <p className="text-md text-red-500 mt-2 flex ">
-            Warning!!! Task is overdue by{" "}
-            {Math.ceil(
-              (new Date() - new Date(card.dueDate)) / (1000 * 60 * 60 * 24),
-            )}{" "}
-            days
-            <IoIosWarning className="ml-1 mb-1 size-7" />
-          </p>
-        )}
-      </div>
+
+      {/* Due Date */}
+      {dueDate && (
+        <div className="flex items-center text-xs mt-2">
+          {!isOverdue ? (
+            <div className="flex items-center text-blue-600 gap-1">
+              <IoTimeSharp size={14} />
+              <span>
+                {dueDate.toLocaleDateString()} ({daysDiff} days)
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center text-red-500 gap-1">
+              <IoIosWarning size={16} />
+              <span>Overdue by {Math.abs(daysDiff)} days</span>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

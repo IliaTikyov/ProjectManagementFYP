@@ -176,7 +176,6 @@ const UserComments = ({ taskId, userId }) => {
       <ToastContainer position="bottom-right" autoClose={3000} />
 
       <div className="w-full max-w-2xl bg-white shadow-lg rounded-2xl border border-gray-100">
-        {/* FORM */}
         <form
           onSubmit={handleSubmit}
           className="flex items-center gap-2 p-4 border-b bg-gray-50 rounded-t-2xl"
@@ -197,14 +196,12 @@ const UserComments = ({ taskId, userId }) => {
           </button>
         </form>
 
-        {/* COMMENTS */}
         <ul className="p-4 space-y-3 max-h-[400px] overflow-y-auto">
           {comments.map((comment) => (
             <li
               key={comment.$id}
               className="bg-gray-50 hover:bg-gray-100 transition rounded-xl p-3 shadow-sm flex justify-between items-start"
             >
-              {/* LEFT SIDE */}
               <div className="flex gap-3 flex-grow">
                 <div className="w-9 h-9 flex items-center justify-center rounded-full bg-blue-100 text-blue-600">
                   <FaRegUser />
@@ -230,7 +227,6 @@ const UserComments = ({ taskId, userId }) => {
                 </div>
               </div>
 
-              {/* ACTIONS */}
               <div className="flex items-center gap-1 ml-2">
                 {editComment === comment.$id ? (
                   <>
