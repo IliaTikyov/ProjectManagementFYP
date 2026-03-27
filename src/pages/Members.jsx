@@ -4,7 +4,6 @@ import { useAuth } from "../context/AuthContext";
 const Members = () => {
   const { user } = useAuth();
 
-  // temporary task id (replace later with real task id)
   const taskId = "12345";
 
   if (!user) {
